@@ -109,7 +109,8 @@ def filter_data(
         if row.hash_id in aggregated_data_dict:
             good_agg_row = AggDataclass(
                 hash_id=row.hash_id,
-                audio_path=str(Path("..", "..", dataset, row.audio_path)),
+                # audio_path=str(Path("..", "..", dataset, row.audio_path)),
+                audio_path=str(Path( dataset, row.audio_path)),
                 duration=row.duration,
                 emotion=aggregated_data_dict[row.hash_id],
                 golden_emo=row.golden_emo,
