@@ -4,14 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cb534d9f-892e-410e-a3e3-bf4a3fa9614c" name="Changes" comment="" />
+    <list default="true" id="cb534d9f-892e-410e-a3e3-bf4a3fa9614c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dusha.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dusha.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dusha/dataset/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/dusha/data_processing/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dusha/dataset/processed_dataset_090/train/replace_path.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dusha/experiments/configs/data.config" beforeDir="false" afterPath="$PROJECT_DIR$/dusha/experiments/configs/data.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dusha/my_experiments/baseline/logictic_regressoin.py" beforeDir="false" afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline/logictic_regressoin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dusha/my_experiments/data_analise/build_balanced_aggregated_jsonl.py" beforeDir="false" afterPath="$PROJECT_DIR$/dusha/my_experiments/data_analise/build_balanced_aggregated_jsonl.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="500341" />
+    <option name="cachedIndexableFilesCount" value="500362" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="Git.Settings">
@@ -29,7 +39,6 @@
       </branch-storage>
     </excluded-from-favorite>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -58,8 +67,14 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.build_balanced_aggregated_jsonl.executor": "Run",
+    "Python.logictic_regressoin.executor": "Run",
+    "Python.processing.executor": "Run",
+    "Python.random_forest.executor": "Run",
+    "Python.svm.executor": "Run",
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "ai.playground.ignore.import.keys.banner.in.settings": "true",
@@ -72,7 +87,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "ml.llm.AcpAgentsConfigurable",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
     "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   },
@@ -84,11 +99,47 @@
   }
 }]]></component>
   <component name="RecapSpentCounter">
-    <option name="endsOfQuotaMs" value="1774638010630" />
-    <option name="spentUsd" value="0.0039995" />
+    <option name="endsOfQuotaMs" value="1777230008519" />
+    <option name="spentUsd" value="0.05768355" />
   </component>
   <component name="RecapUselessUpdatesCounter">
-    <option name="suspendCountdown" value="9" />
+    <option name="suspendCountdown" value="1" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/dusha/data_processing" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="build_balanced_aggregated_jsonl" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="dusha" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/dusha/my_experiments/data_analise" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/dusha/my_experiments/data_analise/build_balanced_aggregated_jsonl.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.build_balanced_aggregated_jsonl" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -114,7 +165,9 @@
       <workItem from="1770667390656" duration="6000" />
       <workItem from="1770667430120" duration="4434000" />
       <workItem from="1774520364627" duration="961000" />
-      <workItem from="1774521370577" duration="848000" />
+      <workItem from="1774521370577" duration="3054000" />
+      <workItem from="1774524442710" duration="12079000" />
+      <workItem from="1774700663132" duration="2627000" />
     </task>
     <servers />
   </component>
@@ -131,5 +184,11 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/dusha$build_balanced_aggregated_jsonl.coverage" NAME="build_balanced_aggregated_jsonl Coverage Results" MODIFIED="1774711887629" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dusha/my_experiments/data_analise" />
+    <SUITE FILE_PATH="coverage/dusha$logictic_regressoin.coverage" NAME="logictic_regressoin Coverage Results" MODIFIED="1774712315879" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dusha/my_experiments/baseline" />
+    <SUITE FILE_PATH="coverage/dusha$random_forest.coverage" NAME="random_forest Coverage Results" MODIFIED="1774713352278" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dusha/my_experiments/baseline" />
+    <SUITE FILE_PATH="coverage/dusha$svm.coverage" NAME="svm Coverage Results" MODIFIED="1774713397336" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dusha/my_experiments/baseline" />
   </component>
 </project>

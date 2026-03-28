@@ -6,6 +6,12 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Dict, Iterable, List, Sequence
 
+# Импорт base_path из data.config
+_data_config_path = Path(__file__).parent.parent.parent / "experiments" / "configs" / "data.config"
+_data_config_ns = {}
+exec(open(_data_config_path).read(), _data_config_ns)
+DATASET_PATH = _data_config_ns['base_path']
+
 TARGET_EMOTIONS = ("angry", "sad", "neutral", "positive")
 
 
@@ -176,7 +182,7 @@ def main() -> None:
     parser.add_argument(
         "--aggregated-dir",
         type=Path,
-        default=Path("/home/natlis/PycharmProjects/dusha_new/dusha/dataset/processed_dataset_090/aggregated_dataset"),
+        default=DATASET_PATH / "processed_dataset_090" / "aggregated_dataset",
         help="Путь к папке aggregated_dataset",
     )
     parser.add_argument("--small-ratio", type=float, default=0.3, help="Доля для small-наборов")
