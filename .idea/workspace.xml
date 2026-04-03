@@ -4,16 +4,58 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cb534d9f-892e-410e-a3e3-bf4a3fa9614c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dusha.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dusha.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="cb534d9f-892e-410e-a3e3-bf4a3fa9614c" name="Changes" comment="add audio and text analise and base models">
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline/models_params/logictic_regressoin_combine_balanced_train_small_model.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline/models_params/logictic_regressoin_combine_balanced_train_small_model_20260328_173819.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline/models_params/logictic_regressoin_combine_balanced_train_small_scaler.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline/models_params/random_forest_combine_balanced_train_small_model.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline/models_params/random_forest_combine_balanced_train_small_model_20260328_175605.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline/models_params/random_forest_combine_balanced_train_small_scaler.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline/models_params/svm_combine_balanced_train_small_model.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline/models_params/svm_combine_balanced_train_small_model_20260328_175927.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline/models_params/svm_combine_balanced_train_small_scaler.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline/random_forest.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline/results/describe_results.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline/svm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline_text/EMBEDDINGS_SETUP.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline_text/Embeddings_LogReg.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline_text/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline_text/TF-IDF_LogReg.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline_text/example_usage.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline_text/models_params/Embeddings_LogReg_combine_balanced_train_small_model.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline_text/models_params/Embeddings_LogReg_combine_balanced_train_small_model_20260402_173000.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline_text/models_params/Embeddings_LogReg_combine_balanced_train_small_scaler.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline_text/models_params/TF-IDF_LogReg_combine_balanced_train_small_model.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline_text/models_params/TF-IDF_LogReg_combine_balanced_train_small_model_20260402_162804.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline_text/models_params/TF-IDF_LogReg_combine_balanced_train_small_vectorizer.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/data_analise/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/data_analise/audio_analise.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/data_analise/example_audio_analise.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/data_analise/text_analise.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/data_analise/visualizations/avg_mel_spectrograms.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/data_analise/visualizations/avg_mfcc.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/data_analise/visualizations/pca_visualization.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/data_analise/visualizations/top_bigrams.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/data_analise/visualizations/top_words.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/data_analise/visualizations/tsne_visualization.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/emotion_spectrogram_analysis.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/energy_distribution.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/mean_spectrograms.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/models/choose_dataset.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/models/logistic_emotion_classifier.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/models/models/logistic_model.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/models/models/models/random_forest_model.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/models/models/random_forest_results.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/models/models/svm_model.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/models/random_forest_emotion_classifier.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/models/svm_emotion_classifier.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dusha/my_experiments/pca_tsne_emotions.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/poetry.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dusha/dataset/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/dusha/data_processing/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dusha/dataset/processed_dataset_090/train/replace_path.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dusha/experiments/configs/data.config" beforeDir="false" afterPath="$PROJECT_DIR$/dusha/experiments/configs/data.config" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dusha/my_experiments/baseline/logictic_regressoin.py" beforeDir="false" afterPath="$PROJECT_DIR$/dusha/my_experiments/baseline/logictic_regressoin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dusha/my_experiments/data_analise/build_balanced_aggregated_jsonl.py" beforeDir="false" afterPath="$PROJECT_DIR$/dusha/my_experiments/data_analise/build_balanced_aggregated_jsonl.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dusha/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/dusha/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dusha/my_experiments/data_analise/main_statistic.py" beforeDir="false" afterPath="$PROJECT_DIR$/dusha/my_experiments/data_analise/main_statistic.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,8 +63,15 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="500362" />
+    <option name="cachedIndexableFilesCount" value="500367" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <excluded-from-favorite>
@@ -40,12 +89,9 @@
     </excluded-from-favorite>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;Natl1s&quot;
-  }
-}</component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {}
+}]]></component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/Natl1s/dusha.git&quot;,
@@ -67,8 +113,11 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.Embeddings_LogReg.executor": "Run",
+    "Python.TF-IDF_LogReg.executor": "Run",
     "Python.build_balanced_aggregated_jsonl.executor": "Run",
     "Python.logictic_regressoin.executor": "Run",
+    "Python.main_statistic.executor": "Run",
     "Python.processing.executor": "Run",
     "Python.random_forest.executor": "Run",
     "Python.svm.executor": "Run",
@@ -87,23 +136,22 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "settings.editor.selected.configurable": "vcs.log",
     "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   },
   "keyToStringList": {
     "ChangesTree.GroupingKeys": [
-      "directory",
       "repository"
     ]
   }
 }]]></component>
   <component name="RecapSpentCounter">
     <option name="endsOfQuotaMs" value="1777230008519" />
-    <option name="spentUsd" value="0.05768355" />
+    <option name="spentUsd" value="0.0712098" />
   </component>
   <component name="RecapUselessUpdatesCounter">
-    <option name="suspendCountdown" value="1" />
+    <option name="suspendCountdown" value="0" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -167,16 +215,44 @@
       <workItem from="1774520364627" duration="961000" />
       <workItem from="1774521370577" duration="3054000" />
       <workItem from="1774524442710" duration="12079000" />
-      <workItem from="1774700663132" duration="2627000" />
+      <workItem from="1774700663132" duration="7569000" />
+      <workItem from="1775071227470" duration="14413000" />
     </task>
+    <task id="LOCAL-00001" summary="3 baseline solutions and saving models">
+      <option name="closed" value="true" />
+      <created>1774713796862</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1774713796862</updated>
+    </task>
+    <task id="LOCAL-00002" summary="add audio and text analise and base models">
+      <option name="closed" value="true" />
+      <created>1775204785290</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1775204785291</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="OPEN_GENERIC_TABS">
+      <map>
+        <entry key="31022e10-976d-4e39-a7bf-d60ed48c2de6" value="TOOL_WINDOW" />
+      </map>
+    </option>
     <option name="TAB_STATES">
       <map>
+        <entry key="31022e10-976d-4e39-a7bf-d60ed48c2de6">
+          <value>
+            <State />
+          </value>
+        </entry>
         <entry key="MAIN">
           <value>
             <State />
@@ -185,10 +261,18 @@
       </map>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="3 baseline solutions and saving models" />
+    <MESSAGE value="add audio and text analise and base models" />
+    <option name="LAST_COMMIT_MESSAGE" value="add audio and text analise and base models" />
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/dusha$main_statistic.coverage" NAME="main_statistic Coverage Results" MODIFIED="1775200536472" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dusha/my_experiments/data_analise" />
     <SUITE FILE_PATH="coverage/dusha$build_balanced_aggregated_jsonl.coverage" NAME="build_balanced_aggregated_jsonl Coverage Results" MODIFIED="1774711887629" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dusha/my_experiments/data_analise" />
     <SUITE FILE_PATH="coverage/dusha$logictic_regressoin.coverage" NAME="logictic_regressoin Coverage Results" MODIFIED="1774712315879" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dusha/my_experiments/baseline" />
     <SUITE FILE_PATH="coverage/dusha$random_forest.coverage" NAME="random_forest Coverage Results" MODIFIED="1774713352278" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dusha/my_experiments/baseline" />
+    <SUITE FILE_PATH="coverage/dusha$TF_IDF_LogReg.coverage" NAME="TF-IDF_LogReg Coverage Results" MODIFIED="1775138703665" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dusha/my_experiments/baseline_text" />
     <SUITE FILE_PATH="coverage/dusha$svm.coverage" NAME="svm Coverage Results" MODIFIED="1774713397336" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dusha/my_experiments/baseline" />
+    <SUITE FILE_PATH="coverage/dusha$Embeddings_LogReg.coverage" NAME="Embeddings_LogReg Coverage Results" MODIFIED="1775140002279" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dusha/my_experiments/baseline_text" />
   </component>
 </project>

@@ -4,6 +4,12 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 from dusha.experiments.core.utils import load_jsonl_as_df
 
+# Импорт base_path из data.config
+_data_config_path = Path(__file__).parent.parent.parent / "experiments" / "configs" / "data.config"
+_data_config_ns = {}
+exec(open(_data_config_path).read(), _data_config_ns)
+DATASET_PATH = _data_config_ns['base_path']
+
 
 def analyze_emotion_distribution(manifest_path):
     """Анализ распределения эмоций в манифесте"""
@@ -174,8 +180,8 @@ def analyze_multiple_datasets(base_path, n_mel_examples=2, show_plots=True):
 
 # Использование
 if __name__ == "__main__":
-    # Укажите путь к обработанному датасету
-    base_path = Path('/home/natlis/PycharmProjects/dusha_new/dusha/dataset/processed_dataset_090')
+    # Путь к обработанному датасету из data.config
+    base_path = DATASET_PATH / 'processed_dataset_090'
 
     # Анализ всех доступных датасетов
     results = analyze_multiple_datasets(base_path, n_mel_examples=2, show_plots=True)
