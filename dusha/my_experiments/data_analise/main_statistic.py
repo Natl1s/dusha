@@ -99,48 +99,14 @@ def print_train_test_balance_shift(results):
             )
 
 
-def load_sample_features(df, manifest_path, n_samples=3, show_plots=True):
-    """Загрузка и вывод примеров mel-спектрограмм из конкретного манифеста."""
-    manifest_path = Path(manifest_path)
-    print(f"\nЗагрузка {n_samples} примеров mel-спектрограмм из {manifest_path.name}:")
-
-    for i in range(min(n_samples, len(df))):
-        row = df.iloc[i]
-        feature_path = (manifest_path.parent / row['tensor']).resolve()
-
-        try:
-            mel_spec = np.load(feature_path)
-            print(f"  Пример {i + 1}: {row['emotion']}")
-            print(f"    ID: {row['id']}")
-            print(f"    Tensor в манифесте: {row['tensor']}")
-            print(f"    Абсолютный путь: {feature_path}")
-            print(f"    Форма спектрограммы: {mel_spec.shape}")
-            print(f"    Длительность: {row['wav_length']} сек")
-            print(f"    Диапазон значений: [{mel_spec.min():.2f}, {mel_spec.max():.2f}]")
-
-            if show_plots:
-                if mel_spec.ndim == 3:
-                    to_show = mel_spec[0]
-                elif mel_spec.ndim == 2:
-                    to_show = mel_spec
-                else:
-                    print(f"    Неожиданная размерность ({mel_spec.ndim}), пропускаю визуализацию")
-                    continue
-
-                plt.figure(figsize=(8, 3))
-                plt.imshow(to_show, aspect='auto', origin='lower')
-                plt.colorbar(label='amplitude')
-                plt.title(f"{manifest_path.stem}: {row['emotion']} ({row['id']})")
-                plt.xlabel('time frames')
-                plt.ylabel('mel bins')
-                plt.tight_layout()
-                plt.show()
-        except Exception as e:
-            print(f"    Ошибка загрузки {feature_path}: {e}")
-
-
-def analyze_multiple_datasets(base_path, n_mel_examples=2, show_plots=True):
-    """Анализ нескольких датасетов"""
+def analyze_multiple_datasets(base_path, save_plots=False):
+    """
+    Анализ нескольких датасетов
+    
+    Args:
+        base_path: Путь к обработанному датасету
+        save_plots: Сохранять ли графики в папку visualizations/
+    """
     base_path = Path(base_path)
 
     # Пути к различным манифестам
@@ -161,15 +127,6 @@ def analyze_multiple_datasets(base_path, n_mel_examples=2, show_plots=True):
             df = analyze_emotion_distribution(manifest_path)
             print_priority_balance_report(df, name)
             results[name] = df
-
-            # Загрузка примеров features только для обучающих датасетов
-            if 'train' in name and name != 'train_combined':
-                load_sample_features(
-                    df,
-                    manifest_path=manifest_path,
-                    n_samples=n_mel_examples,
-                    show_plots=show_plots,
-                )
         else:
             print(f"\nФайл не найден: {manifest_path}")
 
@@ -180,22 +137,110 @@ def analyze_multiple_datasets(base_path, n_mel_examples=2, show_plots=True):
 
 # Использование
 if __name__ == "__main__":
+    import argparse
+    
+    parser = argparse.ArgumentParser(
+        description='Статистический анализ датасетов'
+    )
+    parser.add_argument(
+        '--save-plots',
+        action='store_true',
+        help='Сохранять графики в папку visualizations/'
+    )
+    
+    args = parser.parse_args()
+    
     # Путь к обработанному датасету из data.config
     base_path = DATASET_PATH / 'processed_dataset_090'
+    
+    # Создаем директорию для сохранения графиков
+    output_dir = None
+    if args.save_plots:
+        output_dir = Path(__file__).parent / "visualizations"
+        output_dir.mkdir(exist_ok=True)
+        print(f"\nГрафики будут сохранены в: {output_dir}")
 
     # Анализ всех доступных датасетов
-    results = analyze_multiple_datasets(base_path, n_mel_examples=2, show_plots=True)
+    results = analyze_multiple_datasets(base_path, save_plots=args.save_plots)
 
-    # Дополнительно: визуализация распределения эмоций
+    # Визуализация распределения эмоций
     if 'train_combined' in results:
         df = results['train_combined']
 
+        # График 1: Распределение эмоций (bar chart)
         plt.figure(figsize=(10, 6))
         emotion_counts = df['emotion'].value_counts()
-        plt.bar(emotion_counts.index, emotion_counts.values)
-        plt.title('Распределение эмоций в обучающем датасете')
-        plt.xlabel('Эмоция')
-        plt.ylabel('Количество записей')
+        plt.bar(emotion_counts.index, emotion_counts.values, color=['#FF6B6B', '#4ECDC4', '#95A5A6', '#52C76E'])
+        plt.title('Распределение эмоций в обучающем датасете', fontsize=14, fontweight='bold')
+        plt.xlabel('Эмоция', fontsize=12)
+        plt.ylabel('Количество записей', fontsize=12)
         plt.xticks(rotation=45)
+        plt.grid(axis='y', alpha=0.3)
         plt.tight_layout()
+        
+        if args.save_plots:
+            save_path = output_dir / "emotion_distribution_train.png"
+            plt.savefig(save_path, dpi=300, bbox_inches='tight')
+            print(f"\n✓ График сохранен: {save_path}")
+        
         plt.show()
+        
+        # График 2: Распределение длительности аудио по эмоциям
+        plt.figure(figsize=(12, 6))
+        emotion_names = ['angry', 'sad', 'neutral', 'positive']
+        colors = ['#FF6B6B', '#4ECDC4', '#95A5A6', '#52C76E']
+        
+        for emotion, color in zip(emotion_names, colors):
+            emotion_df = df[df['emotion'] == emotion]
+            if len(emotion_df) > 0:
+                plt.hist(emotion_df['wav_length'], bins=50, alpha=0.6, label=emotion.capitalize(), color=color)
+        
+        plt.title('Распределение длительности аудио по эмоциям', fontsize=14, fontweight='bold')
+        plt.xlabel('Длительность (сек)', fontsize=12)
+        plt.ylabel('Количество', fontsize=12)
+        plt.legend(loc='best', fontsize=11)
+        plt.grid(axis='y', alpha=0.3)
+        plt.tight_layout()
+        
+        if args.save_plots:
+            save_path = output_dir / "duration_distribution_by_emotion.png"
+            plt.savefig(save_path, dpi=300, bbox_inches='tight')
+            print(f"✓ График сохранен: {save_path}")
+        
+        plt.show()
+        
+        # График 3: Boxplot длительности по эмоциям
+        plt.figure(figsize=(10, 6))
+        emotion_data = [df[df['emotion'] == emotion]['wav_length'].values 
+                       for emotion in emotion_names]
+        
+        bp = plt.boxplot(emotion_data, labels=[e.capitalize() for e in emotion_names], 
+                        patch_artist=True, showmeans=True)
+        
+        # Раскрашиваем boxplot
+        for patch, color in zip(bp['boxes'], colors):
+            patch.set_facecolor(color)
+            patch.set_alpha(0.6)
+        
+        plt.title('Распределение длительности аудио (boxplot)', fontsize=14, fontweight='bold')
+        plt.ylabel('Длительность (сек)', fontsize=12)
+        plt.xlabel('Эмоция', fontsize=12)
+        plt.grid(axis='y', alpha=0.3)
+        plt.tight_layout()
+        
+        if args.save_plots:
+            save_path = output_dir / "duration_boxplot_by_emotion.png"
+            plt.savefig(save_path, dpi=300, bbox_inches='tight')
+            print(f"✓ График сохранен: {save_path}")
+        
+        plt.show()
+    
+    if args.save_plots:
+        print(f"\n{'='*60}")
+        print("ВСЕ ГРАФИКИ СОХРАНЕНЫ")
+        print(f"{'='*60}")
+        print(f"Директория: {output_dir}")
+        print("Файлы:")
+        for plot_file in sorted(output_dir.glob("*.png")):
+            print(f"  - {plot_file.name}")
+        print(f"{'='*60}")

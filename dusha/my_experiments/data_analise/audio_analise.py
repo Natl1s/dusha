@@ -566,7 +566,7 @@ def plot_tsne_visualization(X, y, label_names, save_path=None):
     plt.show()
 
 
-def analyze_audio_features(manifest_path, max_samples=None, save_plots=False):
+def analyze_audio_features(manifest_path, max_samples=None):
     """
     Основная функция анализа аудио признаков.
     
@@ -577,10 +577,11 @@ def analyze_audio_features(manifest_path, max_samples=None, save_plots=False):
     4. PCA визуализация
     5. t-SNE визуализация
     
+    Все графики автоматически сохраняются в visualizations/
+    
     Args:
         manifest_path: Путь к манифесту
         max_samples: Максимальное количество сэмплов (None = все)
-        save_plots: Сохранять ли графики на диск
     """
     print(f"\n{'='*60}")
     print("АНАЛИЗ АУДИО ПРИЗНАКОВ")
@@ -590,11 +591,9 @@ def analyze_audio_features(manifest_path, max_samples=None, save_plots=False):
         print(f"Ограничение: {max_samples} сэмплов")
     
     # Создаем директорию для сохранения графиков
-    output_dir = None
-    if save_plots:
-        output_dir = Path(__file__).parent / "visualizations"
-        output_dir.mkdir(exist_ok=True)
-        print(f"Графики будут сохранены в: {output_dir}")
+    output_dir = Path(__file__).parent / "visualizations"
+    output_dir.mkdir(exist_ok=True)
+    print(f"Графики будут сохранены в: {output_dir}")
     
     # 1. Загрузка данных
     features, labels, metadata = load_features_from_manifest(
@@ -615,31 +614,29 @@ def analyze_audio_features(manifest_path, max_samples=None, save_plots=False):
     
     # 2. Усредненные mel-спектрограммы
     avg_spectrograms, emotion_counts = compute_average_mel_spectrograms(features, labels)
-    save_path = output_dir / "avg_mel_spectrograms.png" if save_plots else None
+    save_path = output_dir / "avg_mel_spectrograms.png"
     plot_average_mel_spectrograms(avg_spectrograms, save_path=save_path)
     
     # 3. Средние значения MFCC
     avg_mfcc, mfcc_stats = compute_average_mfcc(features, labels, n_mfcc=13)
-    save_path = output_dir / "avg_mfcc.png" if save_plots else None
+    save_path = output_dir / "avg_mfcc.png"
     plot_average_mfcc(avg_mfcc, mfcc_stats, save_path=save_path)
     
     # 4. Подготовка признаков для визуализации
     X, y, label_names = prepare_features_for_visualization(features, labels)
     
     # 5. PCA визуализация
-    save_path = output_dir / "pca_visualization.png" if save_plots else None
+    save_path = output_dir / "pca_visualization.png"
     plot_pca_visualization(X, y, label_names, save_path=save_path)
     
     # 6. t-SNE визуализация
-    save_path = output_dir / "tsne_visualization.png" if save_plots else None
+    save_path = output_dir / "tsne_visualization.png"
     plot_tsne_visualization(X, y, label_names, save_path=save_path)
     
     print(f"\n{'='*60}")
     print("АНАЛИЗ ЗАВЕРШЕН")
     print(f"{'='*60}")
-    
-    if save_plots:
-        print(f"\n✓ Все графики сохранены в: {output_dir}")
+    print(f"\n✓ Все графики сохранены в: {output_dir}")
 
 
 if __name__ == "__main__":
@@ -658,11 +655,6 @@ if __name__ == "__main__":
         default=None,
         help='Максимальное количество сэмплов для анализа (по умолчанию: все)'
     )
-    parser.add_argument(
-        '--save-plots',
-        action='store_true',
-        help='Сохранять графики в папку visualizations/'
-    )
     
     args = parser.parse_args()
     
@@ -679,9 +671,8 @@ if __name__ == "__main__":
                 print(f"  - {f.stem}")
         exit(1)
     
-    # Запуск анализа
+    # Запуск анализа (графики автоматически сохраняются)
     analyze_audio_features(
         manifest_path,
-        max_samples=args.max_samples,
-        save_plots=args.save_plots
+        max_samples=args.max_samples
     )

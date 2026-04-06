@@ -234,8 +234,8 @@ def train_random_forest(save=True, n_estimators=100, max_depth=None,
     """
     # Пути к данным
     base_path = DATASET_PATH / 'processed_dataset_090'
-    train_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_train_small.jsonl'
-    test_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_test_small.jsonl'
+    train_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_train.jsonl'
+    test_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_test.jsonl'
 
     # Извлечение имени датасета
     dataset_name = get_dataset_name(train_manifest)
@@ -303,8 +303,8 @@ def load_and_evaluate():
     
     # Пути к данным
     base_path = DATASET_PATH / 'processed_dataset_090'
-    train_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_train_small.jsonl'
-    test_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_test_small.jsonl'
+    train_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_train.jsonl'
+    test_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_test.jsonl'
     
     # Извлечение имени датасета
     dataset_name = get_dataset_name(train_manifest)
@@ -394,7 +394,7 @@ if __name__ == "__main__":
     
     # Получение имени датасета для проверки существования модели
     base_path = DATASET_PATH / 'processed_dataset_090'
-    train_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_train_small.jsonl'
+    train_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_train.jsonl'
     dataset_name = get_dataset_name(train_manifest)
     
     # Определение режима работы

@@ -215,8 +215,8 @@ def train_svm(save=True, kernel='rbf', C=1.0, gamma='scale'):
     """
     # Пути к данным
     base_path = DATASET_PATH / 'processed_dataset_090'
-    train_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_train_small.jsonl'
-    test_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_test_small.jsonl'
+    train_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_train.jsonl'
+    test_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_test.jsonl'
 
     # Извлечение имени датасета
     dataset_name = get_dataset_name(train_manifest)
@@ -274,8 +274,8 @@ def load_and_evaluate():
     
     # Пути к данным
     base_path = DATASET_PATH / 'processed_dataset_090'
-    train_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_train_small.jsonl'
-    test_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_test_small.jsonl'
+    train_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_train.jsonl'
+    test_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_test.jsonl'
     
     # Извлечение имени датасета
     dataset_name = get_dataset_name(train_manifest)
@@ -343,7 +343,7 @@ if __name__ == "__main__":
     
     # Получение имени датасета для проверки существования модели
     base_path = DATASET_PATH / 'processed_dataset_090'
-    train_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_train_small.jsonl'
+    train_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_train.jsonl'
     dataset_name = get_dataset_name(train_manifest)
     
     # Определение режима работы

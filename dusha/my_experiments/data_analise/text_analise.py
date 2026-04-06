@@ -37,6 +37,27 @@ try:
 except ImportError:
     WORDCLOUD_AVAILABLE = False
 
+try:
+    import pymorphy3
+    PYMORPHY_AVAILABLE = True
+except ImportError:
+    PYMORPHY_AVAILABLE = False
+    pymorphy3 = None
+    print("⚠ pymorphy3 не установлен. Лемматизация будет отключена.")
+    print("  Установите: pip install pymorphy3 pymorphy3-dicts-ru")
+
+# Инициализация морфологического анализатора
+morph = None
+if PYMORPHY_AVAILABLE and pymorphy3:
+    try:
+        morph = pymorphy3.MorphAnalyzer()
+        print("✓ Лемматизатор pymorphy3 загружен")
+    except Exception as e:
+        PYMORPHY_AVAILABLE = False
+        morph = None
+        print(f"⚠ Не удалось загрузить pymorphy3: {e}")
+        print("  Лемматизация будет отключена.")
+
 # Импорт base_path из data.config
 _data_config_path = Path(__file__).parent.parent.parent / "experiments" / "configs" / "data.config"
 _data_config_ns = {}
@@ -52,15 +73,235 @@ EMOTION_COLORS = {
     'positive': '#52C76E'    # зеленый
 }
 
+# Русские стоп-слова (расширенный список)
+# Включает местоимения, предлоги, союзы, частицы, числительные и другие служебные слова
+RUSSIAN_STOPWORDS = {
+    # Местоимения
+    'я', 'ты', 'он', 'она', 'оно', 'мы', 'вы', 'они',
+    'мой', 'твой', 'его', 'её', 'наш', 'ваш', 'их',
+    'себя', 'меня', 'тебя', 'нас', 'вас',
+    'мне', 'тебе', 'ему', 'ей', 'нам', 'вам', 'им',
+    'мной', 'тобой', 'им', 'ей', 'нами', 'вами', 'ими',
+    'кто', 'что', 'какой', 'который', 'чей', 'где', 'когда', 'куда', 'откуда', 'почему', 'зачем',
+    
+    # Предлоги
+    'в', 'на', 'с', 'к', 'у', 'из', 'от', 'по', 'за', 'о', 'об', 'до', 'при', 'через', 'между',
+    'над', 'под', 'перед', 'после', 'без', 'для', 'про', 'во', 'со', 'ко',
+    
+    # Союзы
+    'и', 'а', 'но', 'или', 'либо', 'да', 'если', 'как', 'чтобы', 'что', 'когда',
+    'потому', 'поэтому', 'так', 'тоже', 'также', 'зато', 'однако',
+    
+    # Частицы
+    'не', 'ни', 'бы', 'ли', 'же', 'ведь', 'даже', 'лишь', 'только', 'уже', 'ещё', 'вот',
+    
+    # Глаголы-связки и вспомогательные слова
+    'быть', 'есть', 'был', 'была', 'было', 'были', 'будет', 'будут',
+    'это', 'этот', 'эта', 'эти', 'тот', 'та', 'те',
+    'весь', 'вся', 'всё', 'все',
+    'такой', 'такая', 'такое', 'такие',
+    'самый', 'самая', 'самое', 'самые',
+    
+    # Другие служебные слова
+    'может', 'можно', 'нужно', 'надо', 'стоит',
+    'вообще', 'кстати', 'конечно', 'наверное', 'может',
+    
+    # Числительные (количественные)
+    'один', 'одна', 'одно', 'одни',
+    'два', 'две', 'двое',
+    'три', 'трое',
+    'четыре', 'четверо',
+    'пять', 'пятеро',
+    'шесть', 'шестеро',
+    'семь', 'семеро',
+    'восемь', 'восьмеро',
+    'девять', 'девятеро',
+    'десять', 'десятеро',
+    'одиннадцать', 'двенадцать', 'тринадцать', 'четырнадцать', 'пятнадцать',
+    'шестнадцать', 'семнадцать', 'восемнадцать', 'девятнадцать',
+    'двадцать', 'тридцать', 'сорок', 'пятьдесят', 'шестьдесят',
+    'семьдесят', 'восемьдесят', 'девяносто',
+    'сто', 'двести', 'триста', 'четыреста', 'пятьсот',
+    'шестьсот', 'семьсот', 'восемьсот', 'девятьсот',
+    'тысяча', 'миллион', 'миллиард', 'триллион',
+    
+    # Порядковые числительные
+    'первый', 'первая', 'первое', 'первые',
+    'второй', 'вторая', 'второе', 'вторые',
+    'третий', 'третья', 'третье', 'третьи',
+    'четвертый', 'четвертая', 'четвертое', 'четвертые',
+    'пятый', 'пятая', 'пятое', 'пятые',
+    'шестой', 'шестая', 'шестое', 'шестые',
+    'седьмой', 'седьмая', 'седьмое', 'седьмые',
+    'восьмой', 'восьмая', 'восьмое', 'восьмые',
+    'девятый', 'девятая', 'девятое', 'девятые',
+    'десятый', 'десятая', 'десятое', 'десятые',
+    
+    # Технические слова (для голосовых ассистентов)
+    'алиса', 'салют', 'джой', 'siri', 'okay', 'окей', 'привет', 'пожалуйста', 'спасибо',
+    'включи', 'выключи', 'скажи', 'покажи', 'найди', 'открой', 'закрой',
+    'сбер', 'афина', 'джа',  # названия ассистентов
+    'command',  # токен маскирования интентов
+    
+    # Междометия и разговорные слова
+    'ну', 'то', 'че',  # частые разговорные слова без эмоциональной нагрузки
+}
 
-def preprocess_text(text):
+# Командные фразы (интенты), которые нужно замаскировать,
+# чтобы они не доминировали в анализе эмоций.
+COMMAND_MASK_TOKEN = "<COMMAND>"
+COMMAND_PHRASES = [
+    "включи фильм",
+    "включить фильм",
+    "смотреть фильм",
+    "посмотреть фильм",
+    "включи песню",
+    "включить песню",
+    "новая серия",
+    "новый серия",
+    "включи канал",
+    "включить канал",
+    "выйти игра",
+    "детский режим",
+    "выключить игра",
+    "найти фильм",
+    "слушать песня",
+    "включить мультик",
+    "включить ютуба",
+    "сезон серия",
+    "показать фильм",
+    "включить музыка",
+    "включи музыку",
+    "сколько год",
+    "смотреть бесплатно",
+    "смотреть сериал",
+]
+COMMAND_PATTERNS = [
+    re.compile(rf"\b{re.escape(phrase)}\b", flags=re.IGNORECASE)
+    for phrase in COMMAND_PHRASES
+]
+
+# Универсальный шаблон интентов: "командный_глагол + объект".
+# Применяется после лемматизации, чтобы ловить разные словоформы.
+COMMAND_VERBS = [
+    "включить", "выключить", "найти", "показать", "смотреть",
+    "посмотреть", "слушать", "открыть", "закрыть", "выйти",
+]
+COMMAND_OBJECTS = [
+    "фильм", "песня", "музыка", "мультик", "канал",
+    "ютуб", "ютуба", "игра", "серия", "сезон", "режим",
+]
+COMMAND_VERB_OBJECT_PATTERN = re.compile(
+    rf"\b(?:{'|'.join(COMMAND_VERBS)})\s+(?:{'|'.join(COMMAND_OBJECTS)})\b",
+    flags=re.IGNORECASE,
+)
+
+# Любая конструкция "числительное + (серия|сезон)" считается интентом.
+NUMERAL_WORDS = [
+    "один", "одна", "одно", "одни",
+    "два", "две", "двое",
+    "три", "трое",
+    "четыре", "четверо",
+    "пять", "пятеро",
+    "шесть", "шестеро",
+    "семь", "семеро",
+    "восемь", "восьмеро",
+    "девять", "девятеро",
+    "десять", "десятеро",
+    "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать",
+    "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать",
+    "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят",
+    "семьдесят", "восемьдесят", "девяносто",
+    "сто", "двести", "триста", "четыреста", "пятьсот",
+    "шестьсот", "семьсот", "восемьсот", "девятьсот",
+    "тысяча", "миллион", "миллиард", "триллион",
+    "первый", "первая", "первое", "первые",
+    "второй", "вторая", "второе", "вторые",
+    "третий", "третья", "третье", "третьи",
+    "четвертый", "четвертая", "четвертое", "четвертые",
+    "пятый", "пятая", "пятое", "пятые",
+    "шестой", "шестая", "шестое", "шестые",
+    "седьмой", "седьмая", "седьмое", "седьмые",
+    "восьмой", "восьмая", "восьмое", "восьмые",
+    "девятый", "девятая", "девятое", "девятые",
+    "десятый", "десятая", "десятое", "десятые",
+]
+NUMERAL_SERIES_SEASON_PATTERN = re.compile(
+    rf"\b(?:\d+|{'|'.join(re.escape(word) for word in NUMERAL_WORDS)})\s+(?:серия|сезон)\b",
+    flags=re.IGNORECASE,
+)
+
+
+def lemmatize_text(text):
+    """
+    Лемматизация текста с помощью pymorphy3.
+    
+    Приводит все слова к начальной форме (нормальной форме):
+    - "люблю", "любишь", "любил" → "любить"
+    - "красивый", "красивая", "красивые" → "красивый"
+    
+    Args:
+        text: Исходный текст
+        
+    Returns:
+        Лемматизированный текст
+    """
+    if not PYMORPHY_AVAILABLE or not morph:
+        return text
+    
+    words = text.split()
+    lemmas = []
+    
+    for word in words:
+        # Не лемматизируем служебные маски вида <COMMAND>
+        if word.startswith("<") and word.endswith(">"):
+            lemmas.append(word)
+            continue
+
+        # Получаем лемму (нормальную форму)
+        parsed = morph.parse(word)[0]
+        lemma = parsed.normal_form
+        lemmas.append(lemma)
+    
+    return ' '.join(lemmas)
+
+
+def mask_command_phrases(text, use_lemma_patterns=False):
+    """
+    Заменяет командные фразы на единый токен <COMMAND>.
+    
+    Args:
+        text: Исходный текст
+        use_lemma_patterns: Включить ли шаблоны по леммам
+            (командный глагол + объект)
+        
+    Returns:
+        Текст с замаскированными интентами
+    """
+    masked = text
+    for pattern in COMMAND_PATTERNS:
+        masked = pattern.sub(COMMAND_MASK_TOKEN, masked)
+    masked = NUMERAL_SERIES_SEASON_PATTERN.sub(COMMAND_MASK_TOKEN, masked)
+    if use_lemma_patterns:
+        masked = COMMAND_VERB_OBJECT_PATTERN.sub(COMMAND_MASK_TOKEN, masked)
+
+    # Схлопываем повторяющиеся маски
+    masked = re.sub(rf"(?:{re.escape(COMMAND_MASK_TOKEN)}\s*)+", f"{COMMAND_MASK_TOKEN} ", masked)
+    return masked.strip()
+
+
+def preprocess_text(text, use_lemmatization=True):
     """
     Предобработка текста:
     1. Приведение к нижнему регистру (lowercase)
     2. Удаление лишних пробелов
+    3. Маскирование командных фраз (intent masking, 1-й проход)
+    4. Лемматизация (опционально)
+    5. Маскирование команд по леммам (2-й проход)
     
     Args:
         text: Исходный текст
+        use_lemmatization: Применять ли лемматизацию
         
     Returns:
         Обработанный текст
@@ -76,6 +317,15 @@ def preprocess_text(text):
     
     # Удаление пробелов в начале и конце строки
     text = text.strip()
+
+    # Маскирование командных фраз (интентов)
+    text = mask_command_phrases(text, use_lemma_patterns=False)
+    
+    # Лемматизация
+    if use_lemmatization:
+        text = lemmatize_text(text)
+        # Второй проход: ловим командные формы после нормализации слов.
+        text = mask_command_phrases(text, use_lemma_patterns=True)
     
     return text
 
@@ -87,6 +337,8 @@ def load_texts_from_manifest(manifest_path):
     Читает JSON файл построчно и извлекает:
     - speaker_text: текст для анализа
     - emotion: метка класса
+    
+    Тексты загружаются БЕЗ предобработки (предобработка будет применена позже).
     
     Args:
         manifest_path: Путь к .jsonl файлу
@@ -108,11 +360,12 @@ def load_texts_from_manifest(manifest_path):
                 # Извлекаем текст из поля speaker_text
                 text = data.get('speaker_text', '')
                 
-                # Предобработка текста
-                text = preprocess_text(text)
+                # Проверяем, что text - строка
+                if not isinstance(text, str):
+                    continue
                 
                 # Пропускаем пустые тексты
-                if not text:
+                if not text.strip():
                     continue
                 
                 texts.append(text)
@@ -140,10 +393,16 @@ def analyze_tfidf_important_words(texts, labels, top_k=10):
     """
     Анализирует важные слова для каждой эмоции с помощью TF-IDF.
     
-    Процесс:
-    1. Обучаем TF-IDF векторизатор на всех текстах
-    2. Для каждой эмоции вычисляем средние TF-IDF значения
-    3. Выбираем топ-K слов с наибольшими значениями
+    Улучшенная версия:
+    - Удаление стоп-слов
+    - N-граммы (1-3): униграммы, биграммы, триграммы
+    - Character n-grams для вариаций слов
+    - Лемматизация текстов
+    
+    TF-IDF (Term Frequency - Inverse Document Frequency) показывает:
+    - TF: частота слова в документе
+    - IDF: редкость слова во всем корпусе
+    - Высокий TF-IDF = слово часто в этом документе, но редко в других
     
     Args:
         texts: Список текстов
@@ -152,31 +411,59 @@ def analyze_tfidf_important_words(texts, labels, top_k=10):
         
     Returns:
         top_words: Словарь {emotion: [(word, score), ...]}
-        vectorizer: Обученный TF-IDF векторизатор
+        vectorizers: Словарь с обученными векторизаторами
     """
     print(f"\n{'='*60}")
     print("АНАЛИЗ ВАЖНЫХ СЛОВ (TF-IDF)")
     print(f"{'='*60}")
     
-    # Создание TF-IDF векторизатора
-    # Используем только униграммы для анализа отдельных слов
-    vectorizer = TfidfVectorizer(
-        ngram_range=(1, 1),      # только униграммы
-        max_features=5000,       # ограничиваем словарь
-        min_df=2,                # слово должно встречаться минимум в 2 документах
-        max_df=0.8,              # не более чем в 80% документов
-        sublinear_tf=True        # сублинейное масштабирование
+    # Предобработка: лемматизация всех текстов
+    print("⏳ Предобработка текстов (лемматизация)...")
+    preprocessed_texts = [preprocess_text(text, use_lemmatization=True) for text in texts]
+    print(f"✓ Обработано {len(preprocessed_texts)} текстов")
+    
+    # 1. Word-level TF-IDF (основной анализ)
+    # Используем униграммы, биграммы и триграммы
+    print("\n1️⃣ Построение word-level TF-IDF...")
+    word_vectorizer = TfidfVectorizer(
+        ngram_range=(1, 3),          # униграммы, биграммы, триграммы
+        max_features=10000,          # ограничиваем словарь
+        min_df=2,                    # слово должно встречаться минимум в 2 документах
+        max_df=0.7,                  # не более чем в 70% документов (убирает слишком частые)
+        sublinear_tf=True,           # сублинейное масштабирование TF
+        stop_words=list(RUSSIAN_STOPWORDS)  # удаляем стоп-слова
     )
     
-    # Обучаем векторизатор и преобразуем тексты
-    X = vectorizer.fit_transform(texts)
-    feature_names = np.array(vectorizer.get_feature_names_out())
+    X_word = word_vectorizer.fit_transform(preprocessed_texts)
+    word_features = np.array(word_vectorizer.get_feature_names_out())
     
-    print(f"✓ TF-IDF матрица построена: {X.shape}")
-    print(f"  - Размер словаря: {len(feature_names)}")
+    print(f"✓ Word-level матрица: {X_word.shape}")
+    print(f"  - Размер словаря: {len(word_features)}")
+    
+    # 2. Character n-grams TF-IDF (для вариаций слов)
+    # Ловит похожие слова: "блять", "блядь", "бля"
+    print("\n2️⃣ Построение char n-grams TF-IDF...")
+    char_vectorizer = TfidfVectorizer(
+        analyzer='char_wb',          # char n-grams внутри границ слов
+        ngram_range=(3, 5),          # символьные 3-5 граммы
+        max_features=5000,
+        min_df=2,
+        max_df=0.7,
+        sublinear_tf=True
+    )
+    
+    X_char = char_vectorizer.fit_transform(preprocessed_texts)
+    char_features = np.array(char_vectorizer.get_feature_names_out())
+    
+    print(f"✓ Char-level матрица: {X_char.shape}")
+    print(f"  - Размер словаря: {len(char_features)}")
     
     # Для каждой эмоции находим важные слова
     top_words = {}
+    
+    print(f"\n{'='*60}")
+    print("ТОП СЛОВА ПО ЭМОЦИЯМ")
+    print(f"{'='*60}")
     
     for emotion in EMOTION_NAMES:
         # Выбираем тексты данной эмоции
@@ -185,22 +472,44 @@ def analyze_tfidf_important_words(texts, labels, top_k=10):
             print(f"⚠ Нет текстов для эмоции: {emotion}")
             continue
         
+        # === WORD-LEVEL АНАЛИЗ ===
         # Усредняем TF-IDF значения по всем текстам данной эмоции
-        emotion_tfidf = X[mask].mean(axis=0).A1
+        emotion_word_tfidf = X_word[mask].mean(axis=0).A1
         
         # Находим топ-K слов
-        top_indices = emotion_tfidf.argsort()[-top_k:][::-1]
+        top_word_indices = emotion_word_tfidf.argsort()[-top_k:][::-1]
         top_words_list = [
-            (feature_names[idx], emotion_tfidf[idx])
-            for idx in top_indices
+            (word_features[idx], emotion_word_tfidf[idx], 'word')
+            for idx in top_word_indices
+        ]
+        
+        # === CHAR-LEVEL АНАЛИЗ ===
+        # Добавляем несколько топ char n-grams для понимания паттернов
+        emotion_char_tfidf = X_char[mask].mean(axis=0).A1
+        top_char_indices = emotion_char_tfidf.argsort()[-5:][::-1]
+        char_ngrams = [
+            (char_features[idx], emotion_char_tfidf[idx], 'char')
+            for idx in top_char_indices
         ]
         
         top_words[emotion] = top_words_list
         
         # Выводим результаты
-        print(f"\n{emotion.upper()} - топ-{top_k} слов:")
-        for i, (word, score) in enumerate(top_words_list, 1):
-            print(f"  {i:2d}. {word:20s} (TF-IDF: {score:.4f})")
+        print(f"\n{emotion.upper()} - топ-{top_k} слов/фраз:")
+        for i, (word, score, _) in enumerate(top_words_list, 1):
+            print(f"  {i:2d}. {word:30s} (TF-IDF: {score:.4f})")
+        
+        # Показываем характерные паттерны символов
+        print(f"\n  📊 Характерные char n-grams:")
+        for ngram, score, _ in char_ngrams:
+            print(f"     '{ngram}' ({score:.4f})")
+    
+    vectorizers = {
+        'word': word_vectorizer,
+        'char': char_vectorizer
+    }
+    
+    return top_words, vectorizers
     
     return top_words, vectorizer
 
@@ -211,6 +520,11 @@ def analyze_bigrams(texts, labels, top_k=10):
     
     Биграмма - это последовательность из двух слов.
     Например: "не хочу", "очень рад", "так себе"
+    
+    Улучшенная версия:
+    - Использует ту же предобработку, что и TF-IDF (включая лемматизацию)
+    - Удаляет стоп-слова
+    - Убирает шумовые биграммы с цифрами/односимвольными токенами
     
     Args:
         texts: Список текстов
@@ -224,15 +538,21 @@ def analyze_bigrams(texts, labels, top_k=10):
     print("АНАЛИЗ ЧАСТЫХ БИГРАММ")
     print(f"{'='*60}")
     
+    print("⏳ Предобработка текстов для биграмм...")
+    preprocessed_texts = [preprocess_text(text, use_lemmatization=True) for text in texts]
+    print(f"✓ Обработано {len(preprocessed_texts)} текстов")
+    
     # Создание векторизатора для биграмм
     vectorizer = CountVectorizer(
         ngram_range=(2, 2),      # только биграммы
         min_df=2,                # биграмма должна встречаться минимум в 2 документах
-        max_df=0.5               # не более чем в 50% документов
+        max_df=0.5,              # не более чем в 50% документов
+        stop_words=list(RUSSIAN_STOPWORDS),  # те же стоп-слова, что в TF-IDF
+        token_pattern=r'(?u)\b[а-яёa-z]{2,}\b'  # только слова из 2+ букв
     )
     
     # Обучаем векторизатор
-    X = vectorizer.fit_transform(texts)
+    X = vectorizer.fit_transform(preprocessed_texts)
     feature_names = np.array(vectorizer.get_feature_names_out())
     
     print(f"✓ Найдено {len(feature_names)} уникальных биграмм")
@@ -272,7 +592,7 @@ def plot_top_words_bar(top_words, save_path=None):
     Визуализация топ-слов для каждой эмоции в виде горизонтальных bar chart.
     
     Args:
-        top_words: Словарь {emotion: [(word, score), ...]}
+        top_words: Словарь {emotion: [(word, score, type), ...]}
         save_path: Путь для сохранения графика (опционально)
     """
     print(f"\n{'='*60}")
@@ -288,9 +608,9 @@ def plot_top_words_bar(top_words, save_path=None):
         
         ax = axes[idx]
         
-        words, scores = zip(*top_words[emotion])
-        words = list(words)
-        scores = list(scores)
+        # Распаковываем кортежи (word, score, type)
+        words = [item[0] for item in top_words[emotion]]
+        scores = [item[1] for item in top_words[emotion]]
         
         # Рисуем горизонтальный bar chart
         y_pos = np.arange(len(words))
@@ -300,7 +620,7 @@ def plot_top_words_bar(top_words, save_path=None):
         ax.set_yticklabels(words, fontsize=11)
         ax.invert_yaxis()  # чтобы самое важное слово было сверху
         ax.set_xlabel('TF-IDF Score', fontsize=12)
-        ax.set_title(f'{emotion.capitalize()} - важные слова', 
+        ax.set_title(f'{emotion.capitalize()} - важные слова/фразы', 
                     fontsize=14, fontweight='bold', color=EMOTION_COLORS[emotion])
         ax.grid(axis='x', alpha=0.3)
     
@@ -311,6 +631,76 @@ def plot_top_words_bar(top_words, save_path=None):
         print(f"✓ График сохранен: {save_path}")
     
     plt.show()
+
+
+def plot_top_words_per_emotion(top_words, output_dir):
+    """
+    Сохраняет отдельный график топ-слов для каждой эмоции.
+
+    Args:
+        top_words: Словарь {emotion: [(word, score, type), ...]}
+        output_dir: Директория для сохранения графиков
+    """
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    print("\nСохранение отдельных графиков топ-слов по эмоциям...")
+    for emotion in EMOTION_NAMES:
+        if emotion not in top_words or not top_words[emotion]:
+            continue
+
+        words = [item[0] for item in top_words[emotion]]
+        scores = [item[1] for item in top_words[emotion]]
+
+        fig, ax = plt.subplots(figsize=(10, 6))
+        y_pos = np.arange(len(words))
+        ax.barh(y_pos, scores, color=EMOTION_COLORS[emotion], alpha=0.8)
+        ax.set_yticks(y_pos)
+        ax.set_yticklabels(words, fontsize=11)
+        ax.invert_yaxis()
+        ax.set_xlabel('TF-IDF Score', fontsize=12)
+        ax.set_title(
+            f'{emotion.capitalize()} - важные слова/фразы',
+            fontsize=14,
+            fontweight='bold',
+            color=EMOTION_COLORS[emotion],
+        )
+        ax.grid(axis='x', alpha=0.3)
+        fig.tight_layout()
+
+        emotion_save_path = output_dir / f"top_words_{emotion}.png"
+        fig.savefig(emotion_save_path, dpi=300, bbox_inches='tight')
+        plt.close(fig)
+        print(f"✓ График сохранен: {emotion_save_path}")
+
+
+def print_plot_data_to_console(top_words, top_bigrams):
+    """
+    Печатает в консоль все топы слов и фраз, которые отображаются на графиках.
+    
+    Args:
+        top_words: Словарь {emotion: [(word, score, type), ...]}
+        top_bigrams: Словарь {emotion: [(bigram, count), ...]}
+    """
+    print(f"\n{'='*60}")
+    print("ДАННЫЕ ДЛЯ ГРАФИКОВ: ТОП СЛОВ И ФРАЗ")
+    print(f"{'='*60}")
+
+    print("\n[График top_words.png] Топ слова/фразы по эмоциям:")
+    for emotion in EMOTION_NAMES:
+        if emotion not in top_words or not top_words[emotion]:
+            continue
+        print(f"\n{emotion.upper()}:")
+        for i, (word, score, _) in enumerate(top_words[emotion], 1):
+            print(f"  {i:2d}. {word:30s} (TF-IDF: {score:.4f})")
+
+    print("\n[График top_bigrams.png] Топ биграммы по эмоциям (ровно как на графике, top-10):")
+    for emotion in EMOTION_NAMES:
+        if emotion not in top_bigrams or not top_bigrams[emotion]:
+            continue
+        print(f"\n{emotion.upper()}:")
+        for i, (bigram, count) in enumerate(top_bigrams[emotion][:10], 1):
+            print(f"  {i:2d}. {bigram:30s} (частота: {count})")
 
 
 def plot_top_bigrams_bar(top_bigrams, save_path=None):
@@ -357,6 +747,48 @@ def plot_top_bigrams_bar(top_bigrams, save_path=None):
         print(f"✓ График сохранен: {save_path}")
     
     plt.show()
+
+
+def plot_top_bigrams_per_emotion(top_bigrams, output_dir):
+    """
+    Сохраняет отдельный график топ-биграмм для каждой эмоции.
+
+    Args:
+        top_bigrams: Словарь {emotion: [(bigram, count), ...]}
+        output_dir: Директория для сохранения графиков
+    """
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    print("\nСохранение отдельных графиков топ-биграмм по эмоциям...")
+    for emotion in EMOTION_NAMES:
+        if emotion not in top_bigrams or not top_bigrams[emotion]:
+            continue
+
+        bigrams, counts = zip(*top_bigrams[emotion][:10])
+        bigrams = list(bigrams)
+        counts = list(counts)
+
+        fig, ax = plt.subplots(figsize=(10, 6))
+        y_pos = np.arange(len(bigrams))
+        ax.barh(y_pos, counts, color=EMOTION_COLORS[emotion], alpha=0.8)
+        ax.set_yticks(y_pos)
+        ax.set_yticklabels(bigrams, fontsize=10)
+        ax.invert_yaxis()
+        ax.set_xlabel('Частота', fontsize=12)
+        ax.set_title(
+            f'{emotion.capitalize()} - частые биграммы',
+            fontsize=14,
+            fontweight='bold',
+            color=EMOTION_COLORS[emotion],
+        )
+        ax.grid(axis='x', alpha=0.3)
+        fig.tight_layout()
+
+        emotion_save_path = output_dir / f"top_bigrams_{emotion}.png"
+        fig.savefig(emotion_save_path, dpi=300, bbox_inches='tight')
+        plt.close(fig)
+        print(f"✓ График сохранен: {emotion_save_path}")
 
 
 def plot_wordcloud(texts, labels, save_path=None):
@@ -427,7 +859,7 @@ def compare_emotions_vocabulary(top_words):
     Сравнивает словари эмоций и находит уникальные/общие слова.
     
     Args:
-        top_words: Словарь {emotion: [(word, score), ...]}
+        top_words: Словарь {emotion: [(word, score, type), ...]}
     """
     print(f"\n{'='*60}")
     print("СРАВНЕНИЕ СЛОВАРЕЙ ЭМОЦИЙ")
@@ -435,8 +867,8 @@ def compare_emotions_vocabulary(top_words):
     
     # Извлекаем слова для каждой эмоции
     emotion_word_sets = {}
-    for emotion, words_scores in top_words.items():
-        emotion_word_sets[emotion] = set(word for word, score in words_scores)
+    for emotion, words_scores_types in top_words.items():
+        emotion_word_sets[emotion] = set(word for word, score, wtype in words_scores_types)
     
     # Находим общие слова между эмоциями
     print("\nОбщие слова между эмоциями:")
@@ -497,7 +929,7 @@ def analyze_text_statistics(texts, labels):
             print(f"    {i}. '{preview}'")
 
 
-def analyze_texts(manifest_path, top_k=10, save_plots=False):
+def analyze_texts(manifest_path, top_k=10):
     """
     Основная функция анализа текстов.
     
@@ -509,10 +941,11 @@ def analyze_texts(manifest_path, top_k=10, save_plots=False):
     5. Сравнение словарей
     6. Визуализация
     
+    Все графики автоматически сохраняются в visualizations/
+    
     Args:
         manifest_path: Путь к манифесту
         top_k: Количество топ-слов/биграмм
-        save_plots: Сохранять ли графики на диск
     """
     print(f"\n{'='*60}")
     print("АНАЛИЗ ТЕКСТОВ")
@@ -521,11 +954,9 @@ def analyze_texts(manifest_path, top_k=10, save_plots=False):
     print(f"Топ-K: {top_k}")
     
     # Создаем директорию для сохранения графиков
-    output_dir = None
-    if save_plots:
-        output_dir = Path(__file__).parent / "visualizations"
-        output_dir.mkdir(exist_ok=True)
-        print(f"Графики будут сохранены в: {output_dir}")
+    output_dir = Path(__file__).parent / "visualizations"
+    output_dir.mkdir(exist_ok=True)
+    print(f"Графики будут сохранены в: {output_dir}")
     
     # 1. Загрузка текстов
     texts, labels = load_texts_from_manifest(manifest_path)
@@ -545,26 +976,29 @@ def analyze_texts(manifest_path, top_k=10, save_plots=False):
     
     # 5. Сравнение словарей
     compare_emotions_vocabulary(top_words)
+
+    # 6. Явный вывод в консоль значений, которые попадут на графики
+    print_plot_data_to_console(top_words, top_bigrams)
     
-    # 6. Визуализация топ-слов
-    save_path = output_dir / "top_words.png" if save_plots else None
+    # 7. Визуализация топ-слов (общий + отдельные по эмоциям)
+    save_path = output_dir / "top_words.png"
     plot_top_words_bar(top_words, save_path=save_path)
+    plot_top_words_per_emotion(top_words, output_dir=output_dir)
     
-    # 7. Визуализация биграмм
-    save_path = output_dir / "top_bigrams.png" if save_plots else None
+    # 8. Визуализация биграмм (общий + отдельные по эмоциям)
+    save_path = output_dir / "top_bigrams.png"
     plot_top_bigrams_bar(top_bigrams, save_path=save_path)
+    plot_top_bigrams_per_emotion(top_bigrams, output_dir=output_dir)
     
-    # 8. Облака слов (опционально)
+    # 9. Облака слов (опционально)
     if WORDCLOUD_AVAILABLE:
-        save_path = output_dir / "wordclouds.png" if save_plots else None
+        save_path = output_dir / "wordclouds.png"
         plot_wordcloud(texts, labels, save_path=save_path)
     
     print(f"\n{'='*60}")
     print("АНАЛИЗ ЗАВЕРШЕН")
     print(f"{'='*60}")
-    
-    if save_plots:
-        print(f"\n✓ Все графики сохранены в: {output_dir}")
+    print(f"\n✓ Все графики сохранены в: {output_dir}")
 
 
 if __name__ == "__main__":
@@ -574,7 +1008,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--dataset',
         type=str,
-        default='combine_balanced_train_small',
+        default='combine_balanced_train',
         help='Название датасета (имя файла без .jsonl)'
     )
     parser.add_argument(
@@ -582,11 +1016,6 @@ if __name__ == "__main__":
         type=int,
         default=10,
         help='Количество топ-слов/биграмм для каждой эмоции (по умолчанию: 10)'
-    )
-    parser.add_argument(
-        '--save-plots',
-        action='store_true',
-        help='Сохранять графики в папку visualizations/'
     )
     
     args = parser.parse_args()
@@ -604,9 +1033,8 @@ if __name__ == "__main__":
                 print(f"  - {f.stem}")
         exit(1)
     
-    # Запуск анализа
+    # Запуск анализа (графики автоматически сохраняются)
     analyze_texts(
         manifest_path,
-        top_k=args.top_k,
-        save_plots=args.save_plots
+        top_k=args.top_k
     )
