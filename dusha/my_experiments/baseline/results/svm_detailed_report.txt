@@ -1,0 +1,70 @@
+================================================================================
+MODEL: svm
+================================================================================
+
+ПАРАМЕТРЫ МОДЕЛИ:
+Тип модели: SVC
+kernel=rbf, C=1.0, gamma=scale
+n_support_total=73934
+n_support_by_class={np.str_('angry'): np.int32(15018), np.str_('neutral'): np.int32(24785), np.str_('positive'): np.int32(16803), np.str_('sad'): np.int32(17328)}
+
+ДОПОЛНИТЕЛЬНЫЕ ОЦЕНКИ ВАЖНОСТИ:
+dual_coef stats: min=-1.000000, max=1.000000, mean=-0.000000, std=0.810257
+
+TRAIN METRICS:
+  accuracy: 0.603871
+  balanced_accuracy: 0.571990
+  precision_macro: 0.606772
+  recall_macro: 0.571990
+  f1_macro: 0.579964
+  precision_weighted: 0.605512
+  recall_weighted: 0.603871
+  f1_weighted: 0.595977
+
+TEST METRICS:
+  accuracy: 0.537429
+  balanced_accuracy: 0.501170
+  precision_macro: 0.542452
+  recall_macro: 0.501170
+  f1_macro: 0.509007
+  precision_weighted: 0.539904
+  recall_weighted: 0.537429
+  f1_weighted: 0.527216
+
+TRAIN CLASSIFICATION REPORT:
+              precision    recall  f1-score   support
+
+       angry       0.57      0.40      0.47     16166
+         sad       0.63      0.69      0.66     22035
+     neutral       0.59      0.73      0.65     32332
+    positive       0.64      0.47      0.54     19410
+
+    accuracy                           0.60     89943
+   macro avg       0.61      0.57      0.58     89943
+weighted avg       0.61      0.60      0.60     89943
+
+
+TEST CLASSIFICATION REPORT:
+              precision    recall  f1-score   support
+
+       angry       0.52      0.30      0.38      1635
+         sad       0.59      0.62      0.60      2342
+     neutral       0.51      0.67      0.58      3270
+    positive       0.56      0.42      0.48      1917
+
+    accuracy                           0.54      9164
+   macro avg       0.54      0.50      0.51      9164
+weighted avg       0.54      0.54      0.53      9164
+
+
+TRAIN CONFUSION MATRIX:
+[[ 6471  2010  5547  2138]
+ [  971 15179  4793  1092]
+ [ 1798  5184 23507  1843]
+ [ 2057  1913  6283  9157]]
+
+TEST CONFUSION MATRIX:
+[[ 486  190  660  299]
+ [  89 1454  669  130]
+ [ 218  672 2180  200]
+ [ 148  166  798  805]]

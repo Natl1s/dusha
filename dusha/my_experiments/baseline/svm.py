@@ -1,7 +1,7 @@
 import numpy as np
 from pathlib import Path
 from sklearn.svm import SVC
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.preprocessing import StandardScaler
 import json
 import joblib
@@ -14,12 +14,29 @@ _data_config_ns = {}
 exec(open(_data_config_path).read(), _data_config_ns)
 DATASET_PATH = _data_config_ns['base_path']
 
+_train_data_config_path = Path(__file__).parent.parent / "train_data.config"
+_train_data_config_ns = {}
+exec(open(_train_data_config_path).read(), _train_data_config_ns)
+TRAIN_DATA_PATH = Path(_train_data_config_ns["train_data_path"])
+
+_test_data_config_path = Path(__file__).parent.parent / "test_data.config"
+_test_data_config_ns = {}
+exec(open(_test_data_config_path).read(), _test_data_config_ns)
+TEST_DATA_PATH = Path(_test_data_config_ns["test_data_path"])
+
 # Путь для сохранения моделей
 MODELS_DIR = Path(__file__).parent / "models_params"
 MODEL_NAME = Path(__file__).stem  # svm
 
 
-def save_model(model, scaler, dataset_name, model_name=MODEL_NAME):
+def save_model(
+    model,
+    scaler,
+    dataset_name,
+    model_name=MODEL_NAME,
+    training_params=None,
+    test_metrics=None,
+):
     """Сохраняет модель и scaler в файл"""
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
     
@@ -28,6 +45,7 @@ def save_model(model, scaler, dataset_name, model_name=MODEL_NAME):
     model_path = MODELS_DIR / f"{full_model_name}_model.pkl"
     scaler_path = MODELS_DIR / f"{full_model_name}_scaler.pkl"
     model_path_timestamped = MODELS_DIR / f"{full_model_name}_model_{timestamp}.pkl"
+    report_path = MODELS_DIR / f"{full_model_name}_training_report.txt"
     
     # Сохранение основных файлов
     joblib.dump(model, model_path)
@@ -35,6 +53,20 @@ def save_model(model, scaler, dataset_name, model_name=MODEL_NAME):
     
     # Сохранение с временной меткой (для истории)
     joblib.dump({'model': model, 'scaler': scaler}, model_path_timestamped)
+
+    report_lines = [
+        f"model_name: {model_name}",
+        f"dataset_name: {dataset_name}",
+        f"saved_at: {timestamp}",
+        "",
+        "training_params:",
+        json.dumps(training_params or {}, ensure_ascii=False, indent=2),
+        "",
+        "test_metrics:",
+        json.dumps(test_metrics or {}, ensure_ascii=False, indent=2),
+        "",
+    ]
+    report_path.write_text("\n".join(report_lines), encoding="utf-8")
     
     print(f"\n{'='*60}")
     print("ПАРАМЕТРЫ МОДЕЛИ СОХРАНЕНЫ")
@@ -42,6 +74,7 @@ def save_model(model, scaler, dataset_name, model_name=MODEL_NAME):
     print(f"✓ Модель: {model_path.absolute()}")
     print(f"✓ Scaler: {scaler_path.absolute()}")
     print(f"✓ Бэкап:  {model_path_timestamped.absolute()}")
+    print(f"✓ Отчёт:  {report_path.absolute()}")
     print(f"{'='*60}")
 
 
@@ -79,6 +112,10 @@ def get_dataset_name(train_manifest_path):
     """Извлекает имя датасета из пути к манифесту"""
     # Берём имя файла без расширения
     return Path(train_manifest_path).stem
+
+
+def get_features_base_from_manifest(manifest_path):
+    return Path(manifest_path).parents[2]
 
 
 
@@ -188,19 +225,48 @@ def evaluate_model(model, scaler, X_train, y_train, X_test, y_test):
     print("ОЦЕНКА НА ОБУЧАЮЩЕЙ ВЫБОРКЕ")
     print(f"{'='*60}")
     train_pred = model.predict(X_train_scaled)
-    print(classification_report(y_train, train_pred,
-                                target_names=['angry', 'sad', 'neutral', 'positive']))
+    train_report_text = classification_report(
+        y_train,
+        train_pred,
+        labels=['angry', 'sad', 'neutral', 'positive'],
+        target_names=['angry', 'sad', 'neutral', 'positive'],
+        zero_division=0,
+    )
+    print(train_report_text)
     
     # Оценка на тестовой выборке
     print(f"\n{'='*60}")
     print("ОЦЕНКА НА ТЕСТОВОЙ ВЫБОРКЕ")
     print(f"{'='*60}")
     test_pred = model.predict(X_test_scaled)
-    print(classification_report(y_test, test_pred,
-                                target_names=['angry', 'sad', 'neutral', 'positive']))
+    test_report_text = classification_report(
+        y_test,
+        test_pred,
+        labels=['angry', 'sad', 'neutral', 'positive'],
+        target_names=['angry', 'sad', 'neutral', 'positive'],
+        zero_division=0,
+    )
+    print(test_report_text)
     
     print("\nМатрица ошибок:")
-    print(confusion_matrix(y_test, test_pred))
+    test_cm = confusion_matrix(y_test, test_pred)
+    print(test_cm)
+
+    test_report_dict = classification_report(
+        y_test,
+        test_pred,
+        labels=['angry', 'sad', 'neutral', 'positive'],
+        target_names=['angry', 'sad', 'neutral', 'positive'],
+        zero_division=0,
+        output_dict=True,
+    )
+
+    return {
+        "test_accuracy": float(accuracy_score(y_test, test_pred)),
+        "test_classification_report_text": test_report_text,
+        "test_classification_report": test_report_dict,
+        "test_confusion_matrix": test_cm.tolist(),
+    }
 
 
 def train_svm(save=True, kernel='rbf', C=1.0, gamma='scale'):
@@ -213,23 +279,22 @@ def train_svm(save=True, kernel='rbf', C=1.0, gamma='scale'):
         C: Параметр регуляризации (по умолчанию 1.0)
         gamma: Параметр ядра для 'rbf', 'poly', 'sigmoid' (по умолчанию 'scale')
     """
-    # Пути к данным
-    base_path = DATASET_PATH / 'processed_dataset_090'
-    train_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_train.jsonl'
-    test_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_test.jsonl'
+    train_manifest = TRAIN_DATA_PATH
+    test_manifest = TEST_DATA_PATH
+    features_base_path = get_features_base_from_manifest(train_manifest)
 
     # Извлечение имени датасета
     dataset_name = get_dataset_name(train_manifest)
     print(f"📊 Датасет: {dataset_name}\n")
 
     print("Загрузка обучающих данных...")
-    X_train, y_train = load_features_from_manifest(train_manifest, base_path.parent)
+    X_train, y_train = load_features_from_manifest(train_manifest, features_base_path)
     print(f"Количество обучающих примеров: {len(y_train)}")
     print(f"Размер обучающей выборки: {X_train.shape}")
     print(f"Распределение классов в train: {np.unique(y_train, return_counts=True)}")
 
     print("\nЗагрузка тестовых данных...")
-    X_test, y_test = load_features_from_manifest(test_manifest, base_path.parent)
+    X_test, y_test = load_features_from_manifest(test_manifest, features_base_path)
     print(f"Количество тестовых примеров: {len(y_test)}")
     print(f"Размер тестовой выборки: {X_test.shape}")
     print(f"Распределение классов в test: {np.unique(y_test, return_counts=True)}")
@@ -257,11 +322,28 @@ def train_svm(save=True, kernel='rbf', C=1.0, gamma='scale'):
     print("✓ Обучение завершено!")
 
     # Оценка модели
-    evaluate_model(model, scaler, X_train, y_train, X_test, y_test)
+    metrics = evaluate_model(model, scaler, X_train, y_train, X_test, y_test)
     
     # Сохранение модели
     if save:
-        save_model(model, scaler, dataset_name)
+        training_params = {
+            "kernel": model.kernel,
+            "C": model.C,
+            "gamma": model.gamma,
+            "degree": model.degree,
+            "coef0": model.coef0,
+            "class_weight": model.class_weight,
+            "random_state": model.random_state,
+            "train_manifest": str(train_manifest),
+            "test_manifest": str(test_manifest),
+        }
+        save_model(
+            model,
+            scaler,
+            dataset_name,
+            training_params=training_params,
+            test_metrics=metrics,
+        )
 
     return model, scaler, dataset_name
 
@@ -272,10 +354,9 @@ def load_and_evaluate():
     print("ЗАГРУЗКА СУЩЕСТВУЮЩЕЙ МОДЕЛИ")
     print(f"{'='*60}")
     
-    # Пути к данным
-    base_path = DATASET_PATH / 'processed_dataset_090'
-    train_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_train.jsonl'
-    test_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_test.jsonl'
+    train_manifest = TRAIN_DATA_PATH
+    test_manifest = TEST_DATA_PATH
+    features_base_path = get_features_base_from_manifest(train_manifest)
     
     # Извлечение имени датасета
     dataset_name = get_dataset_name(train_manifest)
@@ -284,11 +365,11 @@ def load_and_evaluate():
     model, scaler = load_model(dataset_name)
     
     print("\nЗагрузка обучающих данных...")
-    X_train, y_train = load_features_from_manifest(train_manifest, base_path.parent)
+    X_train, y_train = load_features_from_manifest(train_manifest, features_base_path)
     print(f"Количество обучающих примеров: {len(y_train)}")
     
     print("\nЗагрузка тестовых данных...")
-    X_test, y_test = load_features_from_manifest(test_manifest, base_path.parent)
+    X_test, y_test = load_features_from_manifest(test_manifest, features_base_path)
     print(f"Количество тестовых примеров: {len(y_test)}")
     
     # Оценка модели
@@ -342,9 +423,7 @@ if __name__ == "__main__":
         gamma_value = args.gamma  # 'scale' или 'auto'
     
     # Получение имени датасета для проверки существования модели
-    base_path = DATASET_PATH / 'processed_dataset_090'
-    train_manifest = base_path / 'aggregated_dataset' / 'combine_balanced_train.jsonl'
-    dataset_name = get_dataset_name(train_manifest)
+    dataset_name = get_dataset_name(TRAIN_DATA_PATH)
     
     # Определение режима работы
     if args.mode == 'train':

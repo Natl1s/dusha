@@ -1,0 +1,32 @@
+================================================================================
+ИТОГОВОЕ СРАВНЕНИЕ BASELINE-МОДЕЛЕЙ
+================================================================================
+
+Критерий выбора лучшей модели:
+1) максимальный test f1_macro
+2) при равенстве: максимальный test balanced_accuracy
+3) при равенстве: максимальный test accuracy
+
+РАНЖИРОВАНИЕ МОДЕЛЕЙ (по test quality):
+1. svm: f1_macro=0.509007, balanced_accuracy=0.501170, accuracy=0.537429, f1_weighted=0.527216
+2. logictic_regressoin: f1_macro=0.478630, balanced_accuracy=0.472673, accuracy=0.506766, f1_weighted=0.497860
+3. random_forest: f1_macro=0.476523, balanced_accuracy=0.469860, accuracy=0.509275, f1_weighted=0.497083
+
+ЛУЧШАЯ МОДЕЛЬ:
+svm (SVC)
+
+Подробные метрики лучшей модели на TEST:
+  accuracy: 0.537429
+  balanced_accuracy: 0.501170
+  precision_macro: 0.542452
+  recall_macro: 0.501170
+  f1_macro: 0.509007
+  precision_weighted: 0.539904
+  recall_weighted: 0.537429
+  f1_weighted: 0.527216
+
+Per-class test metrics для лучшей модели:
+  angry   : precision=0.516472, recall=0.297248, f1=0.377329, support=1635
+  sad     : precision=0.585818, recall=0.620837, f1=0.602819, support=2342
+  neutral : precision=0.506153, recall=0.666667, f1=0.575426, support=3270
+  positive: precision=0.561367, recall=0.419927, f1=0.480454, support=1917
