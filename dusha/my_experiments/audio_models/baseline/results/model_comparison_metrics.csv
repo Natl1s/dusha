@@ -1,0 +1,4 @@
+model,type,train_accuracy,train_balanced_accuracy,train_f1_macro,train_f1_weighted,test_accuracy,test_balanced_accuracy,test_f1_macro,test_f1_weighted
+logictic_regressoin,LogisticRegression,0.510779,0.480377,0.485423,0.503265,0.506766,0.472673,0.478630,0.497860
+svm,SVC,0.603871,0.571990,0.579964,0.595977,0.537429,0.501170,0.509007,0.527216
+random_forest,RandomForestClassifier,1.000000,1.000000,1.000000,1.000000,0.509275,0.469860,0.476523,0.497083
