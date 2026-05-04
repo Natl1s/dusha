@@ -279,6 +279,7 @@ def train_svm(save=True, kernel='rbf', C=1.0, gamma='scale'):
         kernel=kernel,
         C=C,
         gamma=gamma,
+        probability=True,
         random_state=42,
         verbose=True
     )
@@ -297,6 +298,7 @@ def train_svm(save=True, kernel='rbf', C=1.0, gamma='scale'):
             "degree": model.degree,
             "coef0": model.coef0,
             "class_weight": model.class_weight,
+            "probability": model.probability,
             "random_state": model.random_state,
             "train_manifest": str(train_manifest),
             "test_manifest": str(test_manifest),

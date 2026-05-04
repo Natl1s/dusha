@@ -409,7 +409,7 @@ def _build_optimizer_and_scheduler(
 def train_rubert(
     backbone_name: str = DEFAULT_BACKBONE_NAME,
     save: bool = True,
-    epochs: int = 5,
+    epochs: int = 15,
     stage1_epochs: int = 1,
     batch_size: int = 8,
     grad_accum_steps: int = 2,
@@ -805,10 +805,10 @@ if __name__ == "__main__":
     )
     parser.add_argument("--no-save", action="store_true", help="Не сохранять модель после обучения")
     parser.add_argument("--backbone-name", type=str, default=DEFAULT_BACKBONE_NAME)
-    parser.add_argument("--epochs", type=int, default=10)
+    parser.add_argument("--epochs", type=int, default=15)
     parser.add_argument("--stage1-epochs", type=int, default=1)
-    parser.add_argument("--batch-size", type=int, default=8)
-    parser.add_argument("--grad-accum-steps", type=int, default=4)
+    parser.add_argument("--batch-size", type=int, default=16)
+    parser.add_argument("--grad-accum-steps", type=int, default=8)
     parser.add_argument("--max-len", type=int, default=128)
     parser.add_argument(
         "--dropout",

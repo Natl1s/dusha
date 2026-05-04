@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
-from dusha.experiments.core.utils import load_jsonl_as_df
+from experiments.core.utils import load_jsonl_as_df
 
 # Импорт base_path из data.config
 _data_config_path = Path(__file__).parent.parent.parent / "experiments" / "configs" / "data.config"
@@ -112,11 +112,12 @@ def analyze_multiple_datasets(base_path, save_plots=False):
     # Пути к различным манифестам
     manifests = {
         'train_crowd': base_path / 'train' / 'crowd_train.jsonl',
-        'train_podcast': base_path / 'train' / 'podcast_train.jsonl',
+        #'train_podcast': base_path / 'train' / 'podcast_train.jsonl',
         'test_crowd': base_path / 'test' / 'crowd_test.jsonl',
-        'test_podcast': base_path / 'test' / 'podcast_test.jsonl',
-        'train_combined': base_path / 'train' / 'train.jsonl',
-        'test_combined': base_path / 'test' / 'test.jsonl'
+        #'test_podcast': base_path / 'test' / 'podcast_test.jsonl',
+        #'train_combined': base_path / 'train' / 'train.jsonl',
+        #'test_combined': base_path / 'test' / 'test.jsonl'
+
     }
 
     results = {}

@@ -1,0 +1,230 @@
+=== Анализ датасета: train_combined ===
+Всего записей: 226866
+
+Распределение по текстовым меткам эмоций:
+  neutral: 169255 (74.6%)
+  sad: 22035 (9.7%)
+  positive: 19410 (8.6%)
+  angry: 16166 (7.1%)
+
+Распределение по числовым меткам:
+  0 (angry): 16166 (7.1%)
+  1 (sad): 22035 (9.7%)
+  2 (neutral): 169255 (74.6%)
+  3 (positive): 19410 (8.6%)
+
+Статистика по длительности аудио:
+  Минимальная: 0.95 сек
+  Максимальная: 29.88 сек
+  Средняя: 4.06 сек
+  Медиана: 3.90 сек
+
+[Приоритетный баланс] train_combined
+  Классов: 4
+  Мажоритарный класс: 2 (74.6%)
+  Соотношение max/min: 10.47
+  Норм. энтропия: 0.609
+    label=0: 16166 (7.1%)
+    label=1: 22035 (9.7%)
+    label=2: 169255 (74.6%)
+    label=3: 19410 (8.6%)
+
+
+Вот систематизированный обзор **русскоязычных датасетов для распознавания эмоций по речи (Russian SER datasets)** — их существенно меньше, но есть несколько важных и активно используемых.
+
+---
+
+# 📊 Основные русскоязычные датасеты SER
+
+| Датасет                                     | Описание                                                                      | Размер / структура                            | Эмоции                                                                   | Особенности                                                 | Типичные метрики                                                 |
+| ------------------------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------- | ---------------------------------------------------------------- |
+| **DUSHA**                                   | Крупнейший открытый датасет русской эмоциональной речи (актерская + реальная) | ~350 часов, 300k+ записей ([ISCA Archive][1]) | neutral, positive, anger, sadness и др.                                  | Смешанные реальные и синтетические эмоции, crowd + подкасты | ~81% F1, ~86% accuracy (SOTA модели) ([AIBase Model Library][2]) |
+| **RESD (Russian Emotional Speech Dialogs)** | Диалоговый актёрский датасет с транскриптами                                  | ~3.5 часа аудио ([Papers with Code][3])       | 7 эмоций (anger, disgust, fear, happiness и др.) ([Papers with Code][3]) | Хорош для мультимодальных задач (speech + text)             | ~60–75% accuracy (типично)                                       |
+| **Dusha Crowd subset**                      | Подмножество DUSHA (краудсорсинг)                                             | ~200k+ записей, 2000+ спикеров ([SERP AI][4]) | бинарные/парные эмоции                                                   | Более сбалансированные классы                               | используется для pretraining                                     |
+| **Dusha Podcast subset**                    | Реальная речь из подкастов                                                    | десятки тысяч записей ([SERP AI][4])          | естественные эмоции                                                      | сильный дисбаланс, real-world сценарий                      | ниже метрики (hard setting)                                      |
+| **Aniemore / RESD-based corpora**           | Открытые датасеты и производные коллекции                                     | небольшие (часы) ([Hugging Face][5])          | 5–7 эмоций                                                               | часто используются с wav2vec моделями                       | ~70% accuracy (baseline) ([AIBase Model Library][6])             |
+
+---
+
+## 📌 Комментарии по экосистеме
+
+* В отличие от английского, **русских SER-датасетов мало**
+* **DUSHA — фактически стандарт (must-have)**
+* Часто используют:
+
+  * мультилингвальные модели (wav2vec2, HuBERT)
+  * дообучение на DUSHA
+* Малые датасеты (RESD) — в основном для:
+
+  * экспериментов
+  * мультимодальных задач
+
+---
+
+# 🎯 Практические выводы
+
+* **Если делаешь серьёзную модель → бери DUSHA**
+* **Если мало данных → pretrain на English + finetune на DUSHA**
+* **Для research / статьи → комбинируют RESD + DUSHA**
+
+---
+
+# 🧾 LaTeX таблица (для презентации)
+
+```latex
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{|l|p{3.5cm}|p{2.5cm}|p{2.5cm}|}
+\hline
+\textbf{Dataset} & \textbf{Description} & \textbf{Size} & \textbf{Metrics} \\
+\hline
+DUSHA & Large-scale Russian emotional speech dataset (acted + real) & 350h, 300k samples & Acc $\sim$86\%, F1 $\sim$81\% \\
+\hline
+RESD & Emotional speech dialogues with transcripts & 3.5h audio & Acc $\sim$60-75\% \\
+\hline
+Dusha Crowd & Crowdsourced emotional speech subset & 200k+ samples & Used for pretraining \\
+\hline
+Dusha Podcast & Real-world emotional speech from podcasts & large-scale & Lower performance (real-world) \\
+\hline
+Aniemore corpora & Small open Russian SER datasets & small (hours) & Acc $\sim$70\% \\
+\hline
+\end{tabular}
+\caption{Russian Speech Emotion Recognition Datasets}
+\end{table}
+```
+
+---
+
+## 🚀 Если хочешь дальше углубиться
+
+Могу дополнительно:
+
+* собрать **все доступные open-source ссылки (HuggingFace, GitHub)**
+* сравнить **какие датасеты лучше под wav2vec / HuBERT**
+* или сделать **таблицу multilingual датасетов с русским языком**
+
+[1]: https://www.isca-archive.org/interspeech_2023/kondratenko23_interspeech.html?utm_source=chatgpt.com "ISCA Archive - Hybrid Dataset for Speech Emotion Recognition in Russian Language"
+[2]: https://model.aibase.com/models/details/1915693433894887425?utm_source=chatgpt.com "Hubert-large-speech-emotion-recognition-russian-dusha-finetuned Open Source Model - Identify Multiple Emotional States in Russian Speech"
+[3]: https://paperswithcode.com/dataset/resd?utm_source=chatgpt.com "RESD Dataset | Papers With Code"
+[4]: https://serp.ai/posts/speech-emotion-recognition-in-russian/?utm_source=chatgpt.com "Russian Speech Emotion Recognition | SERP AI"
+[5]: https://huggingface.co/datasets/Aniemore/resd?utm_source=chatgpt.com "Aniemore/resd · Datasets at Hugging Face"
+[6]: https://model.aibase.com/models/details/1915693447769645058?utm_source=chatgpt.com "Open-source wav2vec2-xlsr-53-russian-emotion-recognition model - accurately identify 7 emotions in Russian speech"
+
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{|l|p{3.5cm}|p{2.5cm}|p{2.5cm}|}
+\hline
+\textbf{Dataset} & \textbf{Description} & \textbf{Size} & \textbf{Metrics} \\
+\hline
+IEMOCAP & Dialog-based emotional speech, realistic interactions & 12h, 10 actors & UA, F1 \\
+\hline
+RAVDESS & Audio-visual emotional speech + song & 2076 samples, 24 actors & Accuracy $\sim$97\% \\
+\hline
+CREMA-D & Crowd-labeled multimodal dataset & 7442 clips, 91 actors & Accuracy $\sim$95\% \\
+\hline
+TESS & Clean emotional speech from 2 speakers & 2800 samples & Accuracy $\sim$100\% \\
+\hline
+SAVEE & British English emotional speech & 480 samples & Accuracy $\sim$97\% \\
+\hline
+EmoDB & German emotional speech corpus & 535 samples & Accuracy $\sim$100\% \\
+\hline
+CMU-MOSEI & Large multimodal dataset (audio+video+text) & 23k clips & CCC, MAE \\
+\hline
+EMOVOME & Real-life voice messages dataset & $\sim$1000 samples & UA $\sim$42-61\% \\
+\hline
+\end{tabular}
+\caption{Popular Speech Emotion Recognition Datasets}
+\end{table}
+
+
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{|l|p{3.5cm}|p{2.5cm}|p{2.5cm}|}
+\hline
+\textbf{Dataset} & \textbf{Description} & \textbf{Size} & \textbf{Metrics} \\
+\hline
+DUSHA & Large-scale Russian emotional speech dataset (acted + real) & 350h, 300k samples & Acc $\sim$86\%, F1 $\sim$81\% \\
+\hline
+RESD & Emotional speech dialogues with transcripts & 3.5h audio & Acc $\sim$60-75\% \\
+\hline
+Dusha Crowd & Crowdsourced emotional speech subset & 200k+ samples & Used for pretraining \\
+\hline
+Dusha Podcast & Real-world emotional speech from podcasts & large-scale & Lower performance (real-world) \\
+\hline
+Aniemore corpora & Small open Russian SER datasets & small (hours) & Acc $\sim$70\% \\
+\hline
+\end{tabular}
+\caption{Russian Speech Emotion Recognition Datasets}
+\end{table}
+
+
+
+
+
+
+Модели
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Модель} & \textbf{Тип} & \textbf{Accuracy} \\ \hline
+SVM / классика & feature-based & \textasciitilde 55--65\% \\ \hline
+CNN/LSTM & deep learning & \textasciitilde 65--72\% \\ \hline
+wav2vec2 (fine-tuned) & SSL & \textasciitilde 75--79\% \\ \hline
+HuBERT & SSL & \textasciitilde 72--75\% \\ \hline
+Whisper-based & multimodal-ish & \textasciitilde 72--74\% \\ \hline
+emotion2vec & emotion-specific SSL & SOTA (зависит от setup) \\ \hline
+\end{tabular}
+\caption{Сравнение моделей для распознавания эмоций по речи}
+\end{table}
+
+\usepackage{booktabs}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{Модель} & \textbf{Тип} & \textbf{Accuracy} \\
+\midrule
+SVM / классика & feature-based & \textasciitilde 55--65\% \\
+CNN/LSTM & deep learning & \textasciitilde 65--72\% \\
+wav2vec2 (fine-tuned) & SSL & \textasciitilde 75--79\% \\
+HuBERT & SSL & \textasciitilde 72--75\% \\
+Whisper-based & multimodal-ish & \textasciitilde 72--74\% \\
+emotion2vec & emotion-specific SSL & SOTA (зависит от setup) \\
+\bottomrule
+\end{tabular}
+\caption{Сравнение моделей для распознавания эмоций по речи}
+\end{table}
+
+
+
+
+
+
+Вывод по baseline_text (TF-IDF_LogReg vs Embeddings_LogReg)
+Дата оценки: 2026-04-06
+
+1) TF-IDF_LogReg показала лучшее итоговое качество на одинаковом тесте (n=6392):
+   accuracy=0.55, macro F1=0.57, weighted F1=0.55.
+
+2) Embeddings_LogReg немного уступила:
+   accuracy=0.54, macro F1=0.55, weighted F1=0.53.
+
+3) По классам TF-IDF_LogReg также сильнее:
+   angry: 0.72 vs 0.70,
+   neutral: 0.65 vs 0.63,
+   positive: 0.49 vs 0.46,
+   sad: 0.41 vs 0.41.
+
+4) Embeddings_LogReg более стабильна по train-test (macro F1: 0.56 -> 0.55),
+   тогда как TF-IDF_LogReg имеет больший разрыв (0.66 -> 0.57),
+   но при этом TF-IDF всё равно дает лучший test quality.
+
+Итог: в baseline_text основной моделью целесообразно оставить TF-IDF_LogReg,
+так как она дает лучшие тестовые метрики и не требует тяжелой внешней FastText-модели.
